@@ -3,13 +3,22 @@ REM      BATCH FILE CREATED BY CHARLES DE HAVILLAND 20/02/2012, v2 08/09/2015
 cls
 If "%1"=="" GOTO :norulename
 SET RULENAME=%1
+SETLOCAL EnableDelayedExpansion
+for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
+  set "DEL=%%a"
+)
 ECHO.
+ECHO|set /p ="- Add "
+call :ColorText 0a "Block In & Out "
+ECHO  Firewall rules for all *.exe ^& *.dll files,
 ECHO.
-ECHO   Add 'In AND Out' Firewall rules to all *.exe ^& *.dll files in,
+ECHO|set /p = "- located at '"
+  call :ColorText 0b "%CD%'" 
+ECHO  (inc subfolders),
 ECHO.
-ECHO   %CD% (inc subfolders)
-ECHO.
-ECHO   "%RULENAME%" Firewall rule name will be used ?
+ECHO|set /p = "- using "
+  call :ColorText 1e "%RULENAME%"
+ECHO  as the Firewall rule name ?
 ECHO.
 ECHO.
 ECHO.
@@ -30,13 +39,23 @@ Echo done.
 GOTO :Finish
 
 :norulename
+SETLOCAL EnableDelayedExpansion
+for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (
+  set "DEL=%%a"
+)
 for %%* in (.) do set RULENAME=%%~nx*
 ECHO.
-ECHO   Add 'In AND Out' Firewall rules to all *.exe ^& *.dll files in,
+ECHO|set /p ="- Add "
+call :ColorText 0a "Block In & Out "
+ECHO  Firewall rules for all *.exe ^& *.dll files
 ECHO.
-ECHO   %CD% (inc subfolders)
+ECHO|set /p = "- located at '"
+  call :ColorText 0b "%CD%'" 
+ECHO  (inc subfolders)
 ECHO.
-ECHO   "%RULENAME%" Firewall rule name will be used ?
+ECHO|set /p = "- creating "
+  call :ColorText 1b "%RULENAME%"
+ECHO  as the Firewall rule name ?
 ECHO.
 ECHO.
 ECHO.
@@ -54,6 +73,14 @@ FOR /r %%G in ("*.dll") Do (@echo %%G
 NETSH advfirewall firewall add rule name="%RULENAME%-%%~nxG" dir=out program="%%G" action="block" enable="yes")
 Echo.
 Echo done.
+goto :eof
+
+:ColorText
+echo off
+<nul set /p ".=%DEL%" > "%~2"
+findstr /v /a:%1 /R "^$" "%~2" nul
+del "%~2" > nul 2>&1
+goto :eof
 
 :Finish
 Echo.
