@@ -105,7 +105,7 @@ ECHO.
 ECHO   Press any key to stop ...
 Pause >NUL
 ECHO.
-ECHO   Goodbye.
+ECHO   Goodbye
 ECHO.
 ECHO.
 :END
